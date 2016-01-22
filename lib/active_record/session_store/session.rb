@@ -29,33 +29,12 @@ module ActiveRecord
 
         # Hook to set up sessid compatibility.
         def find_by_session_id(session_id)
-          Thread.exclusive { setup_sessid_compatibility! }
           find_by_session_id(session_id)
         end
 
         private
           def session_id_column
             'session_id'
-          end
-
-          # Compatibility with tables using sessid instead of session_id.
-          def setup_sessid_compatibility!
-            # Reset column info since it may be stale.
-            reset_column_information
-            if columns_hash['sessid']
-              def self.find_by_session_id(*args)
-                find_by_sessid(*args)
-              end
-
-              define_method(:session_id)  { sessid }
-              define_method(:session_id=) { |session_id| self.sessid = session_id }
-            else
-              class << self; remove_possible_method :find_by_session_id; end
-
-              def self.find_by_session_id(session_id)
-                where(session_id: session_id).first
-              end
-            end
           end
       end
 
