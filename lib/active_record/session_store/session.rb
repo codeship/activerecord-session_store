@@ -29,7 +29,7 @@ module ActiveRecord
 
         # Hook to set up sessid compatibility.
         def find_by_session_id(session_id)
-          find_by_session_id(session_id)
+          where(session_id: session_id).first
         end
 
         private
