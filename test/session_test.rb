@@ -31,32 +31,6 @@ module ActiveRecord
         assert !Session.table_exists?
       end
 
-      def test_find_by_sess_id_compat
-        # Force class reload, as we need to redo the meta-programming
-        ActiveRecord::SessionStore.send(:remove_const, :Session)
-        load 'active_record/session_store/session.rb'
-
-        Session.reset_column_information
-        klass = Class.new(Session) do
-          def self.session_id_column
-            'sessid'
-          end
-        end
-        klass.create_table!
-
-        assert klass.columns_hash['sessid'], 'sessid column exists'
-        session = klass.new(:data => 'hello')
-        session.sessid = "100"
-        session.save!
-
-        found = klass.find_by_session_id("100")
-        assert_equal session, found
-        assert_equal session.sessid, found.session_id
-      ensure
-        klass.drop_table!
-        Session.reset_column_information
-      end
-
       def test_find_by_session_id
         Session.create_table!
         session_id = "10"
