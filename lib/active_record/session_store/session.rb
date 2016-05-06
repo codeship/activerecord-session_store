@@ -1,10 +1,12 @@
 require "active_support/core_ext/module/attribute_accessors"
+require "thread"
 
 module ActiveRecord
   module SessionStore
     # The default Active Record class.
     class Session < ActiveRecord::Base
       extend ClassMethods
+      SEMAPHORE = Mutex.new
 
       ##
       # :singleton-method:
