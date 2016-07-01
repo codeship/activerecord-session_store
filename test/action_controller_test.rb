@@ -2,6 +2,7 @@ require 'helper'
 
 class ActionControllerTest < ActionDispatch::IntegrationTest
   class TestController < ActionController::Base
+    protect_from_forgery
     def no_session_access
       head :ok
     end
@@ -38,7 +39,6 @@ class ActionControllerTest < ActionDispatch::IntegrationTest
 
     def renew
       request.env["rack.session.options"][:renew] = true
-      session[:foo] = "baz"
       head :ok
     end
   end
